@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculatrice</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/style.css"/>
+
+</head>
+<body class="d-flex flex-column justify-content-center">
+<div class="container-fluid col-5 mx-auto p-4 d-flex flex-column justify-content-around" id="calc">
+    <div class="roww d-flex justify-content-end align-items-center">
+        <div>
+            <p id="history"></p>
+        </div>
+    </div>
+    <div class="roww d-flex justify-content-end align-items-center">
+        <div>
+            <p id="result"></p>
+        </div>
+    </div>
+    <div class="roww d-flex justify-content-around align-items-center">
+        <button class="tile operator" id="clear">
+            <p class="content m-0 p-0">AC</p>
+        </button>
+        <button class="tile operator" id="backspace">
+            <img src="assets/skip-back.svg" alt="" class="content">
+        </button>
+        <button class="tile operator" id="%">
+            <img src="assets/percent.svg" class="content m-0 p-0">
+        </button>
+        <button class="tile operator" id="/">
+            <img src="assets/divide.svg" class="content m-0 p-0">
+        </button>
+    </div>
+    <div class="  roww d-flex justify-content-around align-items-center">
+        <button class="tile number" id="7">
+            <p class="content m-0 p-0 number">7</p>
+        </button>
+        <button class="tile number" id="8">
+            <p class="content m-0 p-0 number">8</p>
+        </button>
+        <button class="tile number" id="9">
+            <p class="content m-0 p-0 number">9</p>
+        </button>
+        <button class="tile operator" id="*">
+            <img src="assets/x.svg" class="content m-0 p-0">
+        </button>
+    </div>
+    <div class="  roww d-flex justify-content-around align-items-center">
+        <button class="tile number" id="4">
+            <p class="content m-0 p-0 number">4</p>
+        </button>
+        <button class="tile number" id="5">
+            <p class="content m-0 p-0 number">5</p>
+        </button>
+        <button class="tile number" id="6">
+            <p class="content m-0 p-0 number">6</p>
+        </button>
+        <button class="tile operator" id="-">
+            <img src="assets/minus.svg" class="content m-0 p-0">
+        </button>
+    </div>
+    <div class="  roww d-flex justify-content-around align-items-center">
+        <button class="tile number" id="1">
+            <p class="content m-0 p-0 number">1</p>
+        </button>
+        <button class="tile number" id="2">
+            <p class="content m-0 p-0 number">2</p>
+        </button>
+        <button class="tile number" id="3">
+            <p class="content m-0 p-0 number">3</p>
+        </button>
+        <button class="tile operator" id="+">
+            <img src="assets/plus.svg" class="content m-0 p-0">
+        </button>
+    </div>
+    <div class="  roww d-flex justify-content-around align-items-center">
+        <button class="tile number" id="0">
+            <p class="content m-0 p-0">0</p>
+        </button>
+        <button class="tile operator" id=",">
+            <p class="content m-0 p-0">,</p>
+        </button>
+        <button class="tile operator" style="width: 50%" id="=">
+            <p class="content m-0 p-0">=</p>
+        </button>
+    </div>
+</div>
+<script src="js/bootstrap.js"></script>
+<script>
+    function getHistory() {
+        return document.getElementById("history").innerText
+    }
+
+    function printHistory(num) {
+        document.getElementById("history").innerText = num
+    }
+
+    function getResult() {
+        return document.getElementById("result").innerText
+    }
+
+    function getFormattedNumber(num) {
+        if (num == "-") {
+            return ""
+        }
+        let n = Number(num);
+        let value = n.toLocaleString("en")
+        return value
+    }
+
+    function printResult(num) {
+        if (num === "") {
+            document.getElementById("result").innerText = num
+        } else {
+            document.getElementById("result").innerText = getFormattedNumber(num)
+        }
+    }
+
+    function reverseNumberFormat(num) {
+        return Number(num.replace(/,/g, ''))
+    }
+
+    let operator = document.getElementsByClassName("operator");
+    for (let i = 0; i < operator.length; i++) {
+        operator[i].addEventListener('click', function () {
+            let output;
+            if (this.id === "clear") {
+                printResult("")
+                printHistory("")
+            } else if (this.id === "backspace") {
+                output = reverseNumberFormat(getResult()).toString();
+                if (output) {//if output has a value
+                    output = output.substr(0, output.length - 1);
+                    printResult(output);
+                }
+            } else {
+                output = getResult();
+                let history = getHistory();
+                if (output === "" && history !== "") {
+                    if (isNaN(history[history.length - 1])) {
+                        history = history.substr(0, history.length - 1)
+                    }
+                }
+
+                if (output !== "" || history !== "") {
+                    output = output == "" ?
+                        output : reverseNumberFormat(output)
+
+                    history = history + output
+
+                    if (this.id == "=") {
+                        var result = eval(history)
+                        printResult(result)
+                        printHistory("")
+                    } else {
+                        history = history + this.id
+                        printHistory(history)
+                        printResult("")
+                    }
+                }
+            }
+        })
+    }
+    let number = document.getElementsByClassName("number");
+    for (let i = 0; i < number.length; i++) {
+        number[i].addEventListener('click', function () {
+            let output = reverseNumberFormat(getResult())
+            if (!isNaN(output)) {
+                output = output + this.id
+                printResult(output)
+            }
+        })
+    }
+</script>
+</body>
+</html>
